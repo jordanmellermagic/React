@@ -88,7 +88,8 @@ const Dashboard = () => {
       <div className="card">
         <div className="card-title">Raw API data</div>
         <div className="card-subtitle text-sm text-muted">
-          This is whatever your <code>/user/{{"&"}user_id}</code> route returns.
+          This is whatever your <code>/user/{'{'}user_id{'}'}</code>
+ route returns.
         </div>
 
         {loading && <div>Loading…</div>}
