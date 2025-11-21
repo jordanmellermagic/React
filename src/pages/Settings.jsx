@@ -77,7 +77,8 @@ const Settings = () => {
       <div className="card-title">User Settings</div>
       <div className="card-subtitle">
         These fields are stored in your FastAPI backend via{" "}
-        <code>/user/{{"&"}user_id}</code>.
+        <code>/user/{'{'}user_id{'}'}</code>
+
       </div>
 
       {loading && <div className="mt-md">Loading…</div>}
