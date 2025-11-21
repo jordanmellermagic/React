@@ -1,5 +1,6 @@
-import React from 'react' 
+import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+
 import NavBar from './components/NavBar.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
@@ -9,13 +10,18 @@ import Notifications from './pages/Notifications.jsx'
 import Peek from './pages/Peek.jsx'
 import Settings from './pages/Settings.jsx'
 
+import EnvCheck from './pages/EnvCheck.jsx'   // ⭐ NEW DEBUG PAGE
+
 const App = () => {
   return (
     <div className="app-root">
       <NavBar />
       <main className="app-main">
         <Routes>
+          {/* Public route */}
           <Route path="/login" element={<Login />} />
+
+          {/* Protected routes */}
           <Route
             path="/dashboard"
             element={
@@ -24,6 +30,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/notifications"
             element={
@@ -32,6 +39,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/peek"
             element={
@@ -40,6 +48,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/settings"
             element={
@@ -48,6 +57,11 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+          {/* ⭐ NEW: Debug environment variables */}
+          <Route path="/env-check" element={<EnvCheck />} />
+
+          {/* Catch-all → redirect to dashboard */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
