@@ -12,12 +12,12 @@ const api = axios.create({
 export const getUserData = async (userId) => {
   if (!userId) throw new Error("No userId provided");
   const res = await api.get(`/user/${encodeURIComponent(userId)}`);
-  return res.data;
+  return res.data; // backend returns plain JSON
 };
 
 /**
  * Set user data with POST /user/{userId}
- * We send { name, status, message }
+ * We send all fields from the settings form
  */
 export const setUserData = async (userId, payload) => {
   if (!userId) throw new Error("No userId provided");
