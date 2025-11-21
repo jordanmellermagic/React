@@ -1,35 +1,28 @@
-import axios from 'axios'
+// src/api.js
+import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true
-})
+  withCredentials: true,
+});
 
-// Simple login: POST /auth/login { username, password } -> { token, userId }
-export const loginRequest = async (username, password) => {
-  const res = await api.post('/auth/login', { username, password })
-  return res.data
-}
+/**
+ * Get user data from GET /user/{userId}
+ */
+export const getUserData = async (userId) => {
+  if (!userId) throw new Error("No userId provided");
+  const res = await api.get(`/user/${encodeURIComponent(userId)}`);
+  return res.data;
+};
 
-export const getDashboardData = async (token) => {
-  const res = await api.get('/dashboard', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  return res.data
-}
+/**
+ * Set user data with POST /user/{userId}
+ * We send { name, status, message }
+ */
+export const setUserData = async (userId, payload) => {
+  if (!userId) throw new Error("No userId provided");
+  const res = await api.post(`/user/${encodeURIComponent(userId)}`, payload);
+  return res.data;
+};
 
-export const getSettings = async (token) => {
-  const res = await api.get('/settings', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  return res.data
-}
-
-export const updateSettings = async (token, payload) => {
-  const res = await api.put('/settings', payload, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  return res.data
-}
-
-export default api
+export default api;
