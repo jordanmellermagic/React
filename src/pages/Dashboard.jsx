@@ -8,8 +8,8 @@ const Dashboard = () => {
   const { userId } = useAuth();
   const { status: wsStatus } = useWebSocket();
 
-  const [data, setData] = useState(null);        // normalized user data
-  const [raw, setRaw] = useState(null);         // raw API response
+  const [data, setData] = useState(null);
+  const [raw, setRaw] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,14 +21,8 @@ const Dashboard = () => {
       setError(null);
       try {
         const res = await getUserData(userId);
-
-        // Handle both {data: {...}} and plain {...}
-        const normalized = res && typeof res === "object" && "data" in res
-          ? res.data
-          : res;
-
-        setData(normalized || {});
-        setRaw(res);
+        setData(res || {});
+        setRaw(res || {});
       } catch (e) {
         console.error(e);
         setError("Could not load user data. Check your /user/{user_id} route.");
@@ -42,12 +36,26 @@ const Dashboard = () => {
     load();
   }, [userId]);
 
-  const name = data?.name ?? "—";
-  const status = data?.status ?? "—";
-  const message = data?.message ?? "—";
+  const {
+    first_name,
+    last_name,
+    phone_number,
+    birthday,
+    days_alive,
+    address,
+    note_name,
+    screenshot_base64,
+    command,
+  } = data || {};
+
+  const hasScreenshot =
+    typeof screenshot_base64 === "string" &&
+    screenshot_base64.trim() !== "" &&
+    screenshot_base64 !== "string";
 
   return (
     <div>
+      {/* Overview card */}
       <div className="card">
         <div className="card-title">Overview</div>
         <div className="card-subtitle">
@@ -56,7 +64,7 @@ const Dashboard = () => {
 
         <div className="row mt-md">
           <div className="col">
-            <div className="text-sm text-muted">User</div>
+            <div className="text-sm text-muted">User ID</div>
             <div>{userId || "—"}</div>
           </div>
 
@@ -69,27 +77,72 @@ const Dashboard = () => {
           </div>
 
           <div className="col">
-            <div className="text-sm text-muted">Name</div>
-            <div>{name}</div>
+            <div className="text-sm text-muted">Command</div>
+            <div>{command || "—"}</div>
           </div>
 
           <div className="col">
-            <div className="text-sm text-muted">Status</div>
-            <div>{status}</div>
+            <div className="text-sm text-muted">Days alive</div>
+            <div>{typeof days_alive === "number" ? days_alive : "—"}</div>
+          </div>
+        </div>
+
+        <div className="row mt-md">
+          <div className="col">
+            <div className="text-sm text-muted">Name</div>
+            <div>
+              {first_name || "—"} {last_name || ""}
+            </div>
+          </div>
+
+          <div className="col">
+            <div className="text-sm text-muted">Phone</div>
+            <div>{phone_number || "—"}</div>
+          </div>
+
+          <div className="col">
+            <div className="text-sm text-muted">Birthday</div>
+            <div>{birthday || "—"}</div>
+          </div>
+
+          <div className="col">
+            <div className="text-sm text-muted">Address</div>
+            <div>{address || "—"}</div>
           </div>
         </div>
 
         <div className="mt-md">
-          <div className="text-sm text-muted">Message</div>
-          <div>{message}</div>
+          <div className="text-sm text-muted">Note name</div>
+          <div>{note_name || "—"}</div>
         </div>
       </div>
 
+      {/* Screenshot preview */}
+      {hasScreenshot && (
+        <div className="card">
+          <div className="card-title">Latest Screenshot</div>
+          <div className="card-subtitle text-sm text-muted">
+            From <code>screenshot_base64</code>.
+          </div>
+          <div className="mt-md">
+            <img
+              src={`data:image/png;base64,${screenshot_base64}`}
+              alt="Screenshot"
+              style={{
+                maxWidth: "100%",
+                borderRadius: "0.5rem",
+                border: "1px solid #111827",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Raw data card */}
       <div className="card">
         <div className="card-title">Raw API data</div>
         <div className="card-subtitle text-sm text-muted">
-          This is whatever your <code>/user/{'{'}user_id{'}'}</code>
- route returns.
+          This is whatever your <code>/user/{"{user_id}"}</code> route returns.
         </div>
 
         {loading && <div>Loading…</div>}
